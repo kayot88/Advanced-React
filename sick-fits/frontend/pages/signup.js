@@ -2,7 +2,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import Signup from '../components/Signup';
 import Signin from '../components/Signin';
-import Signout from '../components/Signout';
+import RequestReset from '../components/RequestReset';
 
 const Column = styled.div`
   display: grid;
@@ -13,7 +13,7 @@ const signupPage = props => (
   <Column>
     <Signup />
     <Signin />
-    {/* <Signout /> */}
+    <RequestReset />
   </Column>
 );
 export default signupPage;
