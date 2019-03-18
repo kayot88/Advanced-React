@@ -7,7 +7,7 @@ const { hasPermission } = require('../utils');
 
 const Mutations = {
   async createItem(parent, args, ctx, info) {
-    console.log(args);
+    // console.log(args);
     if (await !ctx.request.userId) {
       throw new Error('you must be loggin');
     }
@@ -28,6 +28,7 @@ const Mutations = {
     return item;
   },
   updateItem(parent, args, ctx, info) {
+    console.log(args);
     const updates = { ...args };
     delete updates.id;
     return ctx.db.mutation.updateItem(
@@ -41,8 +42,13 @@ const Mutations = {
 
   async deleteItem(parent, args, ctx, info) {
     const where = { id: args.id };
-    const item = await ctx.db.query.item({ where }, `{title id}`);
-    return ctx.db.mutation.deleteItem({ where }, info);
+    const item = await ctx.db.query.item({ where }, `{title id user{id}}`);
+    const ownItem = item.user.id === ctx.request.userId;
+    const hasPermission = ctx.request.user.permissions.some((perm) => ['ADMIN', 'ITEMDELETE'].includes(perm));
+    if (!ownItem && hasPermission) {
+      throw newError('You haven`t permissions and not owner ')
+    }
+     return ctx.db.mutation.deleteItem({ where }, info);
   },
 
   async signup(parent, args, ctx, info) {
@@ -115,7 +121,7 @@ const Mutations = {
         resetTokenExpiry
       }
     });
-    console.log(res);
+    // console.log(res);
 
     const mailRes = await transport.sendMail({
       from: 'kayot88@gmail.com',
@@ -186,18 +192,21 @@ const Mutations = {
       throw new Error('there aren`t user like you');
     }
     //check if they have permiss to do this
-    console.log(currentUser);
+    // console.log(currentUser);
     hasPermission(currentUser, ['ADMIN', 'PERMISSIONUPDATE']);
-    return ctx.db.mutation.updateUser({
-      data: {
-        permissions:{
-          set: args.permissions,
+    return ctx.db.mutation.updateUser(
+      {
+        data: {
+          permissions: {
+            set: args.permissions
+          }
+        },
+        where: {
+          id: args.userId
         }
       },
-      where: {
-        id: args.userId
-      },
-    }, info)
+      info
+    );
   }
 };
 
