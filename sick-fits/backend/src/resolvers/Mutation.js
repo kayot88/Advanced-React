@@ -7,7 +7,7 @@ const { hasPermission } = require('../utils');
 
 const Mutations = {
   async createItem(parent, args, ctx, info) {
-    // console.log(args);
+    console.log(args);
     if (await !ctx.request.userId) {
       throw new Error('you must be loggin');
     }
@@ -28,7 +28,6 @@ const Mutations = {
     return item;
   },
   updateItem(parent, args, ctx, info) {
-    console.log(args);
     const updates = { ...args };
     delete updates.id;
     return ctx.db.mutation.updateItem(
