@@ -9,6 +9,17 @@ const CURRENT_USER_QUERY = gql`
       name
       email
       permissions
+      cart {
+        id
+        quantity
+        item {
+          id
+          price
+          image
+          title
+          description
+        }
+      }
     }
   }
 `;
@@ -16,7 +27,7 @@ const ConsoleLog = ({ children }) => {
   console.log(children);
   return false;
 };
-
+// console.log(this.props);
 const User = props => (
   <Query {...props} query={CURRENT_USER_QUERY}>
     {payload => props.children(payload) || props.children(payload)}
