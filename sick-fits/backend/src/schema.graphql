@@ -36,6 +36,7 @@ type Mutation {
     password: String!
     confirmPassword: String!
   ): User!
+  addToCart(id: ID!): CartItem
 }
 
 type User {
@@ -43,4 +44,5 @@ type User {
   name: String!
   email: String!
   permissions: [Permission!]!
+  cart: [CartItem!]!
 }
