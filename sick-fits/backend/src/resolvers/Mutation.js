@@ -249,6 +249,33 @@ const Mutations = {
       },
       info
     );
+  },
+  async removeFromCart(parent, args, ctx, info) {
+    //1.find te cart item
+    const cartItem = await ctx.db.query.cartItem(
+      {
+        where: {
+          id: args.id
+        }
+      },
+      `{id, user{id}}`
+    );
+    // if (!cartItem) {
+    //   throw new Error('No much cartItem');
+    // }
+    //2.check for ownes
+    const { userId } = ctx.request;
+    if (cartItem.user.id !== userId) {
+      // console.assert(cartItem.user.id == userId, 'fuck no');
+      throw new Error('You are not the own');
+    }
+    //3.delete item
+    ctx.db.mutation.deleteCartItem(
+      {
+        where: { id: args.id }
+      },
+      info
+    );
   }
 };
 
