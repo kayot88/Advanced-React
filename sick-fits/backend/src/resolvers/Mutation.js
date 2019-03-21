@@ -260,9 +260,9 @@ const Mutations = {
       },
       `{id, user{id}}`
     );
-    // if (!cartItem) {
-    //   throw new Error('No much cartItem');
-    // }
+    if (!cartItem) {
+      throw new Error('No much cartItem');
+    }
     //2.check for ownes
     const { userId } = ctx.request;
     if (cartItem.user.id !== userId) {
@@ -270,11 +270,11 @@ const Mutations = {
       throw new Error('You are not the own');
     }
     //3.delete item
-    ctx.db.mutation.deleteCartItem(
+    return ctx.db.mutation.deleteCartItem(
       {
         where: { id: args.id }
       },
-      info
+    info
     );
   }
 };
