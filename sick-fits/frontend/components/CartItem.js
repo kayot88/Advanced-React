@@ -21,6 +21,13 @@ const CartItemStyles = styled.li`
 
 const CartItem = ({ cartItem }) => {
   //destruct cartItem from props
+  if (!cartItem.item)
+    return (
+      <CartItemStyles>
+        <p>Thisitem has been removed</p>
+        <RemoveFromCart id={cartItem.id} />
+      </CartItemStyles>
+    );
   return (
     <CartItemStyles>
       <img width="100" src={cartItem.item.image} />
@@ -34,7 +41,7 @@ const CartItem = ({ cartItem }) => {
           </em>
         </p>
       </div>
-      <RemoveFromCart id={cartItem.id}/>
+      <RemoveFromCart id={cartItem.id} />
     </CartItemStyles>
   );
 };
