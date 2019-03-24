@@ -10,7 +10,7 @@ import CloseButton from './styles/CloseButton';
 import SickButton from './styles/SickButton';
 import calcTotalPrice from '../lib/calcTotalPrice';
 import formatMoney from '../lib/formatMoney';
-
+import TakeMyMoney from './TakeMyMoney';
 const LOCAL_STATE_QUERY = gql`
   query {
     cartOpen @client
@@ -34,6 +34,7 @@ const Cart = () => (
   <Composed>
     {({ user, toggleCart, localState }) => {
       const me = user.data.me;
+      console.log(me);
       if (!me) return null;
       return (
         <CartStyles open={localState.data.cartOpen}>
@@ -54,7 +55,9 @@ const Cart = () => (
           </ul>
           <footer>
             <p>{formatMoney(calcTotalPrice(me.cart))}</p>
-            <SickButton>Checkout</SickButton>
+            <TakeMyMoney>
+              <SickButton>Checkout</SickButton>
+            </TakeMyMoney>
           </footer>
         </CartStyles>
       );
