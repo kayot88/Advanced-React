@@ -9,32 +9,61 @@ import calcTotalPrice from '../lib/calcTotalPrice';
 import Error from './ErrorMessage';
 import User, { CURRENT_USER_QUERY } from './User';
 
+const CREATE_ORDER_MUTATION = gql`
+  mutation CREATE_ORDER_MUTATION($token: String!) {
+    createOrder(token: $token) {
+      id
+      charge
+      total
+      items {
+        id
+        title
+      }
+    }
+  }
+`;
+
 function totalItems(cart) {
   return cart.reduce((tally, cartItem) => {
     return tally + cartItem.quantity;
   }, 0);
 }
 class TakeMyMoney extends Component {
-  onToken = (res) => {
+  onToken = (res, createOrder) => {
     console.log('On token Called');
     console.log(res.id);
-  }
+    //manually call the mutation once we have stripe token
+    createOrder({
+      variables: {
+        token: res.id
+      }
+    }).catch(err => {
+      alert(err.message);
+    });
+  };
   render() {
     return (
       <User>
         {({ data: { me } }) => (
-          <StripeCheckout
-            amount={calcTotalPrice(me.cart)}
-            name="Sick Fits"
-            description={`Order of ${totalItems(me.cart)} items`}
-            image={me.cart[0].item && me.cart[0].item.image}
-            stripeKey="pk_test_smnrpYhYyfEZP8DcdRztrohE00qLj6NGWN"
-            currency="USD"
-            email={me.email}
-            token={res => this.onToken(res)}
+          <Mutation
+            mutation={CREATE_ORDER_MUTATION}
+            refetchQueries={[{ query: CREATE_ORDER_MUTATION }]}
           >
-            {this.props.children}
-          </StripeCheckout>
+            {createOrder => (
+              <StripeCheckout
+                amount={calcTotalPrice(me.cart)}
+                name="Sick Fits"
+                description={`Order of ${totalItems(me.cart)} items`}
+                image={me.cart[0].item && me.cart[0].item.image}
+                stripeKey="pk_test_smnrpYhYyfEZP8DcdRztrohE00qLj6NGWN"
+                currency="USD"
+                email={me.email}
+                token={res => this.onToken(res, createOrder)}
+              >
+                {this.props.children}
+              </StripeCheckout>
+            )}
+          </Mutation>
         )}
       </User>
     );
