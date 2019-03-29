@@ -44,7 +44,10 @@ const Pagination = props => (
             </a>
           </Link>
           <p>
+          
+          <span className="totalPages">
             Page {page} of {pages}
+          </span>                
           </p>
           <p>{count} items Total!</p>
           <Link
@@ -63,3 +66,4 @@ const Pagination = props => (
 );
 
 export default Pagination;
+export {PAGINATION_QUERY};
